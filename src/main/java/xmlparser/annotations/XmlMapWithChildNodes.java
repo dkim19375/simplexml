@@ -22,5 +22,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface XmlMapWithChildNodes {
     String keyName();
+
     String valueName() default "";
 }

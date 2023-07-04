@@ -10,14 +10,6 @@ import static xmlparser.XmlParser.newXmlParser;
 
 public class PrettyPrint {
 
-    public static class Pojo {
-        public Map<String, Field> map = new HashMap<>();
-    }
-    public static class Field {
-        @XmlAttribute
-        public String attribute;
-    }
-
     public static void main(final String... args) {
         // Pretty printing is actually the default
         final XmlParser parser = newXmlParser().shouldPrettyPrint().build();
@@ -26,6 +18,15 @@ public class PrettyPrint {
         final Pojo pojo = new Pojo();
         pojo.map.put("key", field);
         System.out.println(parser.toXml(pojo));
+    }
+
+    public static class Pojo {
+        public Map<String, Field> map = new HashMap<>();
+    }
+
+    public static class Field {
+        @XmlAttribute
+        public String attribute;
     }
 
 }

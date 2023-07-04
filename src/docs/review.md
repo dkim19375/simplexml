@@ -1,4 +1,3 @@
-
 Some use cases:
 
 https://stackoverflow.com/questions/50553142/concatenate-multiple-tags-from-a-xml-file-using-java/51005798#51005798

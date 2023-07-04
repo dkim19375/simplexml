@@ -5,7 +5,9 @@ import xmlparser.XmlParser;
 import xmlparser.error.InvalidXml;
 import xmlparser.model.XmlElement;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class InvalidXmlTest {

@@ -8,6 +8,13 @@ import xmlparser.annotations.XmlTextNode;
 
 public final class Serialize {
 
+    public static void main(final String... args) {
+        final Project project = new Project("test<>&\"'", "Just a project", "invisible");
+
+        final XmlParser parser = new XmlParser();
+        System.out.println(parser.toXml(project));
+    }
+
     private static class Project {
         @XmlAttribute
         @XmlName("other")
@@ -24,13 +31,6 @@ public final class Serialize {
             this.text = text;
             this.hidden = hidden;
         }
-    }
-
-    public static void main(final String... args) {
-        final Project project = new Project("test<>&\"'", "Just a project", "invisible");
-
-        final XmlParser parser = new XmlParser();
-        System.out.println(parser.toXml(project));
     }
 
 }

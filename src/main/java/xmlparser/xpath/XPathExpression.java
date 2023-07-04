@@ -4,20 +4,25 @@ import xmlparser.error.InvalidXPath;
 import xmlparser.model.XmlElement;
 import xmlparser.model.XmlElement.XmlTextElement;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static xmlparser.utils.Builder.toNumber;
 import static xmlparser.utils.Constants.EXPRESSION_PATH_SEPARATOR;
 
 /**
- * Adapted from xml-lif (https://github.com/liflab/xml-lif) by Sylvain Hallé
+ * Adapted from xml-lif (<a href="https://github.com/liflab/xml-lif">...</a>) by Sylvain Hallé
  */
 public final class XPathExpression {
 
-	public final List<Segment> segments;
-	public XPathExpression(final List<Segment> segments) {
-		this.segments = segments;
-	}
+    public final List<Segment> segments;
+
+    public XPathExpression(final List<Segment> segments) {
+        this.segments = segments;
+    }
 
     public static XPathExpression newXPath(final String xpath) throws InvalidXPath {
         if (xpath == null) throw new InvalidXPath("Input string is null");
@@ -27,6 +32,47 @@ public final class XPathExpression {
             segments.add(Segment.parseSegment(part));
         }
         return new XPathExpression(segments);
+    }
+
+    private static Set<XmlElement> evaluate(final List<Segment> segments, final XmlElement root) {
+        final Set<XmlElement> result = new HashSet<>();
+
+        final Segment first_segment = segments.get(0);
+        if (first_segment instanceof TextSegment) {
+            if (root instanceof XmlTextElement) {
+                result.add(root);
+            }
+            return result;
+        }
+
+        if (first_segment.elementName.compareTo(root.name) != 0) {
+            return result;
+        }
+
+        final Collection<Predicate> predicates = first_segment.predicates;
+        for (final Predicate p : predicates) {
+            if (!p.evaluate(root)) {
+                // Predicate returns false: stop considering this branch
+                return result;
+            }
+        }
+
+        // This segment is OK; remove it and continue evaluation with every
+        // child of the root
+        if (segments.size() == 1) {
+            result.add(root);
+            return result;
+        }
+
+        final List<Segment> new_segments = segments.subList(1, segments.size());
+        if (!new_segments.isEmpty()) {
+            for (final XmlElement child : root.children) {
+                result.addAll(evaluate(new_segments, child));
+            }
+        } else {
+            result.add(root);
+        }
+        return result;
     }
 
     public XmlElement evaluateAny(final XmlElement root) {
@@ -82,51 +128,8 @@ public final class XPathExpression {
         return new_col;
     }
 
-
     public Set<XmlElement> evaluate(final XmlElement root) {
         return evaluate(segments, root);
     }
-
-	private static Set<XmlElement> evaluate(final List<Segment> segments, final XmlElement root) {
-        final Set<XmlElement> result = new HashSet<>();
-
-        final Segment first_segment = segments.get(0);
-        if (first_segment instanceof TextSegment) {
-            if (root instanceof XmlTextElement) {
-                result.add(root);
-            }
-            return result;
-        }
-
-        if (first_segment.elementName.compareTo(root.name) != 0) {
-            return result;
-        }
-
-        final Collection<Predicate> predicates = first_segment.predicates;
-        for (final Predicate p : predicates) {
-            if (!p.evaluate(root)) {
-                // Predicate returns false: stop considering this branch
-                return result;
-            }
-        }
-
-        // This segment is OK; remove it and continue evaluation with every
-        // child of the root
-        if (segments.size() == 1) {
-            result.add(root);
-            return result;
-        }
-
-        final List<Segment> new_segments = segments.subList(1, segments.size());
-        if (!new_segments.isEmpty()) {
-            for (final XmlElement child : root.children) {
-                result.addAll(evaluate(new_segments, child));
-            }
-        }
-        else {
-            result.add(root);
-        }
-        return result;
-	}
 
 }

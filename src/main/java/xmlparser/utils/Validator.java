@@ -2,7 +2,8 @@ package xmlparser.utils;
 
 import xmlparser.error.InvalidXPath;
 
-public enum Validator {;
+public enum Validator {
+    ;
 
     public static <T> T[] hasExactLength(final T[] array, final int size, final String message) throws InvalidXPath {
         if (array.length != size) throw new InvalidXPath(message);

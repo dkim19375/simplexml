@@ -13,6 +13,11 @@ import java.util.Map;
  */
 public final class Question4 {
 
+    public static void main(final String... args) {
+        XmlParser parser = new XmlParser();
+        System.out.println(parser.toXml(new MyObject()));
+    }
+
     @XmlName("object")
     public static class MyObject {
         @XmlAttribute
@@ -24,11 +29,6 @@ public final class Question4 {
             description.put("en", "Test en");
             description.put("fr", "Test fr");
         }
-    }
-
-    public static void main(final String... args) {
-        XmlParser parser = new XmlParser();
-        System.out.println(parser.toXml(new MyObject()));
     }
 
 }

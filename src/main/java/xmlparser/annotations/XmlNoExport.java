@@ -8,4 +8,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * Marks a field to have it be excluded from serialization.
  */
 @Retention(RUNTIME)
-public @interface XmlNoExport { /* just a marker */ }
+public @interface XmlNoExport { /* just a marker */
+}

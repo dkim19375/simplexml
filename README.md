@@ -1,5 +1,4 @@
-
-[![GitHub Release](https://img.shields.io/github/release/codemonstur/simplexml.svg)](https://github.com/codemonstur/simplexml/releases) 
+[![GitHub Release](https://img.shields.io/github/release/codemonstur/simplexml.svg)](https://github.com/codemonstur/simplexml/releases)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.codemonstur/simplexml/badge.svg)](http://mvnrepository.com/artifact/com.github.codemonstur/simplexml)
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
 
@@ -7,16 +6,20 @@
 
 After a number of bad experiences with XML parsing in Java I decided to write my own parser.
 
-This project has the following characteristics; correct XML parsing, small, few dependencies, 
+This project has the following characteristics; correct XML parsing, small, few dependencies,
 thread-safe, user friendly API, secure.
 
-Version 3.x depends on Java 19. 
+Version 3.x depends on Java 19.
 For Java 8 support you have to use 2.x versions.
 
 ## How to use
 
-The unit tests in [src/test/java/unittests](https://github.com/codemonstur/simplexml/tree/master/src/test/java/unittests) can give you a good idea of the capabilities of SimpleXml.
-There are also a number of small example programs in [src/test/java/example](https://github.com/codemonstur/simplexml/tree/master/src/test/java/example) that showcase various features.
+The unit tests
+in [src/test/java/unittests](https://github.com/codemonstur/simplexml/tree/master/src/test/java/unittests) can give you
+a good idea of the capabilities of SimpleXml.
+There are also a number of small example programs
+in [src/test/java/example](https://github.com/codemonstur/simplexml/tree/master/src/test/java/example) that showcase
+various features.
 
 ### Examples
 
@@ -58,13 +61,15 @@ This code will output:
     </myobject>
 
 There are more serialization options
+
 - Renaming fields
 - Fields as attributes
 - Field as text node
 - Skipping fields
 - etc...
 
-For more documentation on serializing look in [src/docs/serialize.md](https://github.com/codemonstur/simplexml/tree/master/src/docs/serialize.md).
+For more documentation on serializing look
+in [src/docs/serialize.md](https://github.com/codemonstur/simplexml/tree/master/src/docs/serialize.md).
 
 ### Deserializing
 
@@ -83,6 +88,7 @@ This code will output:
     test
 
 The deserializer will respect the same annotations as the serializer
+
 - Renamed fields
 - Attributes
 - Text nodes

@@ -16,17 +16,17 @@ public class StreamTest {
 
     private static final String STREAMABLE =
             "<tag attribute=\"something\" bla=\"/\">\n" +
-            "    <child></child>\n" +
-            "</tag>\n" +
-            "\n" +
-            "<something />\n" +
-            "\n" +
-            "<else><child1></child1><child2></child2></else>\n";
+                    "    <child></child>\n" +
+                    "</tag>\n" +
+                    "\n" +
+                    "<something />\n" +
+                    "\n" +
+                    "<else><child1></child1><child2></child2></else>\n";
 
     private static final String XML_ITEM_1 =
             "<tag attribute=\"something\" bla=\"/\">\n" +
-            "    <child></child>\n" +
-            "</tag>";
+                    "    <child></child>\n" +
+                    "</tag>";
     private static final String XML_ITEM_2 = "<something />";
     private static final String XML_ITEM_3 = "<else><child1></child1><child2></child2></else>";
 

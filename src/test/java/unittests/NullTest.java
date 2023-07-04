@@ -4,7 +4,9 @@ import model.SimplePojo;
 import org.junit.Test;
 import xmlparser.XmlParser;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static xmlparser.XmlParser.newXmlParser;
 
 public class NullTest {

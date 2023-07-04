@@ -14,59 +14,6 @@ import static xmlparser.utils.IO.newStreamReader;
 
 public interface XmlIterator {
 
-    default CheckedIterator<String> iterateXml(final InputStreamReader in) {
-        return new CheckedIterator<>() {
-            public boolean hasNext() throws IOException {
-                final Character next = readFirstNonWhiteChar(in);
-                if (next == null) return false;
-                if (next == '<') return true;
-                throw new InvalidXml();
-            }
-
-            public String next() throws IOException {
-                return readUntilCurrentTagIsClosed(in);
-            }
-        };
-    }
-
-    default CheckedIterator<XmlElement> iterateDom(final InputStreamReader in, final Charset charset, final Trim trimmer, final UnEscape escaper) {
-        return new CheckedIterator<>() {
-            public boolean hasNext() throws Exception {
-                final Character next = readFirstNonWhiteChar(in);
-                if (next == null) return false;
-                if (next == '<') return true;
-                throw new InvalidXml();
-            }
-
-            public XmlElement next() throws Exception {
-                final String xml = readUntilCurrentTagIsClosed(in);
-                try (final InputStreamReader in = newStreamReader(xml, charset)) {
-                    return XmlReader.toXmlDom(in, trimmer, escaper);
-                }
-            }
-        };
-    }
-
-    default <T> CheckedIterator<T> iterateObject(final InputStreamReader in, final Charset charset, final XmlReader reader
-            , final Class<T> clazz, final Trim trimmer, final UnEscape escaper) {
-        return new CheckedIterator<>() {
-            public boolean hasNext() throws Exception {
-                final Character next = readFirstNonWhiteChar(in);
-                if (next == null) return false;
-                if (next == '<') return true;
-                throw new InvalidXml();
-            }
-
-            public T next() throws Exception {
-                final String xml = readUntilCurrentTagIsClosed(in);
-                try (final InputStreamReader in = newStreamReader(xml, charset)) {
-                    final XmlElement element = XmlReader.toXmlDom(in, trimmer, escaper);
-                    return reader.domToObject(element, clazz);
-                }
-            }
-        };
-    }
-
     static Character readFirstNonWhiteChar(final InputStreamReader in) throws IOException {
         int r;
         while ((r = in.read()) != -1) {
@@ -110,6 +57,59 @@ public interface XmlIterator {
             previousWasSmallerThan = c == '<';
         }
         return builder.toString();
+    }
+
+    default CheckedIterator<String> iterateXml(final InputStreamReader in) {
+        return new CheckedIterator<String>() {
+            public boolean hasNext() throws IOException {
+                final Character next = readFirstNonWhiteChar(in);
+                if (next == null) return false;
+                if (next == '<') return true;
+                throw new InvalidXml();
+            }
+
+            public String next() throws IOException {
+                return readUntilCurrentTagIsClosed(in);
+            }
+        };
+    }
+
+    default CheckedIterator<XmlElement> iterateDom(final InputStreamReader in, final Charset charset, final Trim trimmer, final UnEscape escaper) {
+        return new CheckedIterator<XmlElement>() {
+            public boolean hasNext() throws Exception {
+                final Character next = readFirstNonWhiteChar(in);
+                if (next == null) return false;
+                if (next == '<') return true;
+                throw new InvalidXml();
+            }
+
+            public XmlElement next() throws Exception {
+                final String xml = readUntilCurrentTagIsClosed(in);
+                try (final InputStreamReader in = newStreamReader(xml, charset)) {
+                    return XmlReader.toXmlDom(in, trimmer, escaper);
+                }
+            }
+        };
+    }
+
+    default <T> CheckedIterator<T> iterateObject(final InputStreamReader in, final Charset charset, final XmlReader reader
+            , final Class<T> clazz, final Trim trimmer, final UnEscape escaper) {
+        return new CheckedIterator<T>() {
+            public boolean hasNext() throws Exception {
+                final Character next = readFirstNonWhiteChar(in);
+                if (next == null) return false;
+                if (next == '<') return true;
+                throw new InvalidXml();
+            }
+
+            public T next() throws Exception {
+                final String xml = readUntilCurrentTagIsClosed(in);
+                try (final InputStreamReader in = newStreamReader(xml, charset)) {
+                    final XmlElement element = XmlReader.toXmlDom(in, trimmer, escaper);
+                    return reader.domToObject(element, clazz);
+                }
+            }
+        };
     }
 
 }

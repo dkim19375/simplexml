@@ -5,7 +5,12 @@ import model.SimpleEnum;
 import org.junit.Test;
 import xmlparser.XmlParser;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -14,24 +19,32 @@ import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEqua
 public class ComplexTest {
 
     private static final ComplexPojo complex = newDefaultComplexPojo();
-    private static final String complexXml = """
-            <complexpojo>
-              <name>complex</name>
-              <list>first</list>
-              <list>second</list>
-              <list>monkey</list>
-              <map>
-                <1>thumb</1>
-              </map>
-              <array>0.5</array>
-              <array>34.8</array>
-              <set>45.3</set>
-              <set>1234567.9</set>
-              <testenum>one</testenum>
-            </complexpojo>
-            """;
+    private static final String complexXml = "<complexpojo>\n" +
+            "  <name>complex</name>\n" +
+            "  <list>first</list>\n" +
+            "  <list>second</list>\n" +
+            "  <list>monkey</list>\n" +
+            "  <map>\n" +
+            "    <1>thumb</1>\n" +
+            "  </map>\n" +
+            "  <array>0.5</array>\n" +
+            "  <array>34.8</array>\n" +
+            "  <set>45.3</set>\n" +
+            "  <set>1234567.9</set>\n" +
+            "  <testenum>one</testenum>\n" +
+            "</complexpojo>\n";
 
     private final XmlParser parser = new XmlParser();
+
+    private static ComplexPojo newDefaultComplexPojo() {
+        final List<String> list = Arrays.asList("first", "second", "monkey");
+        final Map<Integer, String> map = new HashMap<>();
+        map.put(1, "thumb");
+        final Float[] array = {0.5f, 34.8f};
+        final Set<Double> set = new HashSet<>(Arrays.asList(45.3, 1234567.90));
+
+        return new ComplexPojo("complex", list, map, array, set, SimpleEnum.one);
+    }
 
     @Test
     public void deserialize() {
@@ -47,16 +60,6 @@ public class ComplexTest {
 
         assertNotNull("No serialization response", xml);
         assertEquals("Invalid serialized output", complexXml, xml);
-    }
-
-    private static ComplexPojo newDefaultComplexPojo() {
-        final List<String> list = Arrays.asList("first", "second", "monkey");
-        final Map<Integer, String> map = new HashMap<>();
-        map.put(1, "thumb");
-        final Float[] array = { 0.5f, 34.8f };
-        final Set<Double> set = new HashSet<>(Arrays.asList(45.3, 1234567.90));
-
-        return new ComplexPojo("complex", list, map, array, set, SimpleEnum.one);
     }
 
 }

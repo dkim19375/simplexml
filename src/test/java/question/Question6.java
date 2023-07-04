@@ -10,9 +10,9 @@ public final class Question6 {
 
     public static void main(final String... args) {
         final XmlElement document = newElement("computer")
-            .child(newElement("general")
-                .child(newElement("name").text("computer-name-placeholder")))
-            .build();
+                .child(newElement("general")
+                        .child(newElement("name").text("computer-name-placeholder")))
+                .build();
         XmlParser simple = new XmlParser();
         System.out.println(simple.domToXml(document));
     }

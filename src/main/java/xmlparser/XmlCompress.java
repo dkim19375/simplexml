@@ -3,29 +3,31 @@ package xmlparser;
 import xmlparser.error.InvalidXml;
 import xmlparser.utils.Trimming.Trim;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static xmlparser.utils.Constants.*;
-import static xmlparser.utils.XmlParse.*;
+import static xmlparser.utils.Constants.CHAR_DOUBLE_QUOTE;
+import static xmlparser.utils.Constants.CHAR_EQUALS;
+import static xmlparser.utils.Constants.CHAR_FORWARD_SLASH;
+import static xmlparser.utils.Constants.CHAR_SPACE;
+import static xmlparser.utils.Constants.FORWARD_SLASH;
+import static xmlparser.utils.Constants.XML_PROLOG;
+import static xmlparser.utils.Constants.XML_TAG_END;
+import static xmlparser.utils.Constants.XML_TAG_START;
+import static xmlparser.utils.XmlParse.getNameOfTag;
+import static xmlparser.utils.XmlParse.indexOfNonWhitespaceChar;
+import static xmlparser.utils.XmlParse.indexOfWhitespaceChar;
+import static xmlparser.utils.XmlParse.readLine;
 
 public interface XmlCompress {
 
-    default String compressXml(final String input, final Trim trimmer) {
-        try ( final var out = new ByteArrayOutputStream()
-            ; final var reader = new InputStreamReader(new ByteArrayInputStream(input.getBytes(UTF_8)), UTF_8)
-            ; final var writer = new OutputStreamWriter(out, UTF_8)
-            ) {
-            compressXML(reader, writer, trimmer);
-            return out.toString(UTF_8);
-        } catch (IOException e) {
-            // can't happen.
-            return null;
-        }
-    }
-
     static void compressXML(final InputStreamReader in, final OutputStreamWriter out, final Trim trimmer) throws IOException {
-        String str; while ((str = readLine(in, XML_TAG_START)) != null) {
+        String str;
+        while ((str = readLine(in, XML_TAG_START)) != null) {
             // Probably a text node, remove the whitespace and write
             if (!str.isEmpty()) out.write(trimmer.trim(str));
 
@@ -56,10 +58,10 @@ public interface XmlCompress {
             out.write(name);
             // It could be a self closing tag
             if (str.endsWith(FORWARD_SLASH)) {
-                parseAttributes(str.substring(beginAttr+1, end-1), out, trimmer);
+                parseAttributes(str.substring(beginAttr + 1, end - 1), out, trimmer);
                 out.write(FORWARD_SLASH);
             } else {
-                parseAttributes(str.substring(beginAttr+1, end), out, trimmer);
+                parseAttributes(str.substring(beginAttr + 1, end), out, trimmer);
             }
             out.write(XML_TAG_END);
         }
@@ -71,28 +73,29 @@ public interface XmlCompress {
         while (!input.isEmpty()) {
             int startName = indexOfNonWhitespaceChar(input, 0, trimmer);
             if (startName == -1) break;
-            int equals = input.indexOf(CHAR_EQUALS, startName+1);
+            int equals = input.indexOf(CHAR_EQUALS, startName + 1);
             if (equals == -1) break;
 
             final String name = trimmer.trim(input.substring(startName, equals));
-            input = input.substring(equals+1);
+            input = input.substring(equals + 1);
 
             int startValue = indexOfNonWhitespaceChar(input, 0, trimmer);
             if (startValue == -1) break;
 
-            int endValue; final String value;
+            int endValue;
+            final String value;
             if (input.charAt(startValue) == CHAR_DOUBLE_QUOTE) {
                 startValue++;
                 endValue = input.indexOf(CHAR_DOUBLE_QUOTE, startValue);
-                if (endValue == -1) endValue = input.length()-1;
+                if (endValue == -1) endValue = input.length() - 1;
                 value = trimmer.trim(input.substring(startValue, endValue));
             } else {
-                endValue = indexOfWhitespaceChar(input, startValue+1, trimmer);
-                if (endValue == -1) endValue = input.length()-1;
-                value = trimmer.trim(input.substring(startValue, endValue+1));
+                endValue = indexOfWhitespaceChar(input, startValue + 1, trimmer);
+                if (endValue == -1) endValue = input.length() - 1;
+                value = trimmer.trim(input.substring(startValue, endValue + 1));
             }
 
-            input = input.substring(endValue+1);
+            input = input.substring(endValue + 1);
 
             out.write(CHAR_SPACE);
             out.write(name);
@@ -100,6 +103,19 @@ public interface XmlCompress {
             out.write(CHAR_DOUBLE_QUOTE);
             out.write(value);
             out.write(CHAR_DOUBLE_QUOTE);
+        }
+    }
+
+    default String compressXml(final String input, final Trim trimmer) {
+        try (final ByteArrayOutputStream out = new ByteArrayOutputStream()
+             ; final InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(input.getBytes(UTF_8)), UTF_8)
+             ; final OutputStreamWriter writer = new OutputStreamWriter(out, UTF_8)
+        ) {
+            compressXML(reader, writer, trimmer);
+            return out.toString("UTF-8");
+        } catch (IOException e) {
+            // can't happen.
+            return null;
         }
     }
 

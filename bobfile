@@ -3,7 +3,7 @@ include https://raw.githubusercontent.com/codemonstur/bobfiles/master/foss-lib-g
 version: 3.1.0
 packaging: jar
 enablePreview: false
-release: 19
+release: 8
 dependencies:
   - repository: org.objenesis:objenesis:3.3
   - repository: junit:junit:4.13.2

@@ -23,4 +23,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * </pre>
  */
 @Retention(RUNTIME)
-public @interface XmlAttribute { /* just a marker */ }
+public @interface XmlAttribute { /* just a marker */
+}

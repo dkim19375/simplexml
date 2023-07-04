@@ -35,9 +35,9 @@
     <properties>
         <module.name>com.github.codemonstur.simplexml</module.name>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>19</maven.compiler.source>
-        <maven.compiler.target>19</maven.compiler.target>
-        <maven.compiler.release>19</maven.compiler.release>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.release>8</maven.compiler.release>
     </properties>
 
     <distributionManagement>
@@ -99,7 +99,7 @@
                         </manifestEntries>
                     </archive>
                 </configuration>
-             </plugin>
+            </plugin>
 
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
@@ -120,7 +120,9 @@
                 <executions>
                     <execution>
                         <id>attach-sources</id>
-                        <goals><goal>jar</goal></goals>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -132,7 +134,9 @@
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
-                        <goals><goal>jar</goal></goals>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

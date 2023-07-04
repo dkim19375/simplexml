@@ -21,37 +21,58 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import static xmlparser.utils.Constants.*;
-import static xmlparser.utils.Reflection.*;
+import static xmlparser.utils.Constants.EMPTY;
+import static xmlparser.utils.Constants.INDENT;
+import static xmlparser.utils.Reflection.determineTypeOfFields;
+import static xmlparser.utils.Reflection.isWrapped;
+import static xmlparser.utils.Reflection.toClassOfMapKey;
+import static xmlparser.utils.Reflection.toClassOfMapValue;
+import static xmlparser.utils.Reflection.toClassType;
+import static xmlparser.utils.Reflection.toEnumValue;
+import static xmlparser.utils.Reflection.toName;
+import static xmlparser.utils.Reflection.toWrappedName;
 import static xmlparser.utils.Validator.multipleAreTrue;
-import static xmlparser.utils.XML.*;
+import static xmlparser.utils.XML.addAttribute;
+import static xmlparser.utils.XML.attributesToXml;
+import static xmlparser.utils.XML.escapeXml;
+import static xmlparser.utils.XML.writeClosingTag;
+import static xmlparser.utils.XML.writeOpeningAndClosingTag;
+import static xmlparser.utils.XML.writeOpeningTag;
+import static xmlparser.utils.XML.writeSelfClosingTag;
+import static xmlparser.utils.XML.writeTag;
 
 public interface XmlWriter extends AccessSerializers, ParserConfiguration {
 
     default String toXml(final Object o) {
         final StringWriter output = new StringWriter();
 
-        try { writeObject(output, toName(o.getClass()), o, EMPTY); }
-        catch (IllegalArgumentException | IllegalAccessException | IOException e) { /* can't happen */ }
+        try {
+            writeObject(output, toName(o.getClass()), o, EMPTY);
+        } catch (IllegalArgumentException | IllegalAccessException | IOException e) { /* can't happen */ }
 
         return output.toString();
     }
+
     default void toXml(final Object o, final Writer writer) throws IOException {
-        try { writeObject(writer, toName(o.getClass()), o, EMPTY); }
-        catch (IllegalArgumentException | IllegalAccessException e) { /* can't happen */ }
+        try {
+            writeObject(writer, toName(o.getClass()), o, EMPTY);
+        } catch (IllegalArgumentException | IllegalAccessException e) { /* can't happen */ }
     }
 
     default String domToXml(final XmlElement node) {
         final StringWriter output = new StringWriter();
 
-        try { domToXml(node, output); }
-        catch (IOException e) { /* can't happen */ }
+        try {
+            domToXml(node, output);
+        } catch (IOException e) { /* can't happen */ }
 
         return output.toString();
     }
+
     default void domToXml(final XmlElement node, final Writer writer) throws IOException {
         domToXml(node, writer, "");
     }
+
     default void domToXml(final XmlElement node, final Writer writer, final String indent) throws IOException {
         final String text = node.getText();
         if (text == null && node.children.isEmpty()) {
@@ -69,7 +90,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
             for (final XmlElement child : node.children) {
                 if (child instanceof XmlTextElement) continue;
 
-                domToXml(child, writer, INDENT+indent);
+                domToXml(child, writer, INDENT + indent);
             }
             if (text != null) {
                 writeIndent(writer, indent);
@@ -81,13 +102,13 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         }
     }
 
-    private void writeSimple(final Writer writer, final String name, final Object value, final String indent) throws IOException {
+    default void writeSimple(final Writer writer, final String name, final Object value, final String indent) throws IOException {
         writeIndent(writer, indent);
         writeTag(writer, name, escapeXml(getSerializer(value.getClass()).convert(value), shouldEncodeUTF8()));
         writeNewLine(writer);
     }
 
-    private void writeSimple(final Writer writer, final String name, final Object value, final List<Field> attributes
+    default void writeSimple(final Writer writer, final String name, final Object value, final List<Field> attributes
             , final Object text, final String indent) throws IOException, IllegalAccessException {
         writeIndent(writer, indent);
         writeTag(writer, name, attributesToXml(attributes, value, shouldEncodeUTF8()),
@@ -95,28 +116,28 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         writeNewLine(writer);
     }
 
-    private void writeList(final Writer writer, final Field field, final String name, final Object o, final String indent)
+    default void writeList(final Writer writer, final Field field, final String name, final Object o, final String indent)
             throws IllegalArgumentException, IllegalAccessException, IOException {
         for (final Object item : (List<?>) o) {
             writeField(item.getClass(), field, writer, name, item, indent);
         }
     }
 
-    private void writeArray(final Writer writer, final Field field, final String name, final Object o, final String indent)
+    default void writeArray(final Writer writer, final Field field, final String name, final Object o, final String indent)
             throws IllegalArgumentException, IllegalAccessException, IOException {
         for (final Object item : (Object[]) o) {
             writeField(item.getClass(), field, writer, name, item, indent);
         }
     }
 
-    private void writeSet(final Writer writer, final Field field, final String name, final Object o, final String indent)
+    default void writeSet(final Writer writer, final Field field, final String name, final Object o, final String indent)
             throws IllegalArgumentException, IllegalAccessException, IOException {
         for (final Object item : (Set<?>) o) {
             writeField(item.getClass(), field, writer, name, item, indent);
         }
     }
 
-    private void writeMap(final Writer writer, final Field field, final String name, final Object o, final String indent)
+    default void writeMap(final Writer writer, final Field field, final String name, final Object o, final String indent)
             throws IllegalArgumentException, IllegalAccessException, IOException {
 
         final boolean isXmlMapTagIsKey = field.isAnnotationPresent(XmlMapTagIsKey.class);
@@ -127,7 +148,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
             throw new InvalidAnnotation("Only one of XmlMapTagIsKey, XmlMapWithAttributes and XmlMapWithChildNodes is allowed per field");
 
         final ParameterizedType type = (ParameterizedType) field.getGenericType();
-        final Map<?,?> map = (Map<?,?>) o;
+        final Map<?, ?> map = (Map<?, ?>) o;
         final ObjectSerializer convKey = getSerializer(toClassOfMapKey(type));
         final ObjectSerializer convVal = getSerializer(toClassOfMapValue(type));
 
@@ -162,13 +183,13 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
                 writeIndent(writer, indent);
                 writeOpeningTag(writer, name);
                 writeNewLine(writer);
-                writeField(entry.getKey().getClass(), field, writer, keyName, entry.getKey(), indent+INDENT);
+                writeField(entry.getKey().getClass(), field, writer, keyName, entry.getKey(), indent + INDENT);
                 if (valueName.isEmpty()) {
-                    writeIndent(writer, indent+INDENT);
+                    writeIndent(writer, indent + INDENT);
                     writer.append(escapeXml(convVal.convert(entry.getValue()), shouldEncodeUTF8()));
                     writeNewLine(writer);
                 } else {
-                    writeField(entry.getValue().getClass(), field, writer, valueName, entry.getValue(), indent+INDENT);
+                    writeField(entry.getValue().getClass(), field, writer, valueName, entry.getValue(), indent + INDENT);
                 }
                 writeIndent(writer, indent);
                 writeClosingTag(writer, name);
@@ -181,20 +202,20 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         writeOpeningTag(writer, name);
         writeNewLine(writer);
         for (final Entry<?, ?> entry : map.entrySet()) {
-            writeField(entry.getValue().getClass(), field, writer, entry.getKey().toString(), entry.getValue(), indent+INDENT);
+            writeField(entry.getValue().getClass(), field, writer, entry.getKey().toString(), entry.getValue(), indent + INDENT);
         }
         writeIndent(writer, indent);
         writeClosingTag(writer, name);
         writeNewLine(writer);
     }
 
-    private void writeEnum(final Writer writer, final String name, final Enum o, final String indent) throws IOException {
+    default void writeEnum(final Writer writer, final String name, final Enum<?> o, final String indent) throws IOException {
         writeIndent(writer, indent);
         writeTag(writer, name, escapeXml(toEnumValue(o), shouldEncodeUTF8()));
         writeNewLine(writer);
     }
 
-    private void writeObject(final Writer writer, final String name, final Object o, final String indent)
+    default void writeObject(final Writer writer, final String name, final Object o, final String indent)
             throws IllegalArgumentException, IllegalAccessException, IOException {
         final List<Field> attributes = new LinkedList<>();
         final List<Field> childNodes = new LinkedList<>();
@@ -205,8 +226,7 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
                 writeIndent(writer, indent);
                 writeSelfClosingTag(writer, name, attributesToXml(attributes, o, shouldEncodeUTF8()));
                 writeNewLine(writer);
-            }
-            else
+            } else
                 writeSimple(writer, name, o, attributes, textNode.get(o), indent);
             return;
         }
@@ -218,15 +238,15 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         for (final Field f : childNodes) {
             boolean isWrapped = isWrapped(f);
             if (isWrapped) {
-                writeIndent(writer, indent+INDENT);
+                writeIndent(writer, indent + INDENT);
                 writeOpeningTag(writer, toWrappedName(f));
                 writeNewLine(writer);
-                writeField(f.getType(), f, writer, toName(f, f.get(o)), f.get(o), indent+INDENT+INDENT);
-                writeIndent(writer, indent+INDENT);
+                writeField(f.getType(), f, writer, toName(f, f.get(o)), f.get(o), indent + INDENT + INDENT);
+                writeIndent(writer, indent + INDENT);
                 writeClosingTag(writer, toWrappedName(f));
                 writeNewLine(writer);
             } else {
-                writeField(f.getType(), f, writer, toName(f, f.get(o)), f.get(o), indent+INDENT);
+                writeField(f.getType(), f, writer, toName(f, f.get(o)), f.get(o), indent + INDENT);
             }
         }
         if (textNode != null) {
@@ -239,24 +259,38 @@ public interface XmlWriter extends AccessSerializers, ParserConfiguration {
         writeNewLine(writer);
     }
 
-    private void writeField(final Class<?> c, final Field field, final Writer writer,
-            final String name, final Object value, final String indent)
+    default void writeField(final Class<?> c, final Field field, final Writer writer,
+                            final String name, final Object value, final String indent)
             throws IllegalArgumentException, IllegalAccessException, IOException {
         switch (toClassType(c, this)) {
-            case SIMPLE -> writeSimple(writer, name, value, indent);
-            case ARRAY -> writeArray(writer, field, name, value, indent);
-            case LIST -> writeList(writer, field, name, value, indent);
-            case SET -> writeSet(writer, field, name, value, indent);
-            case MAP -> writeMap(writer, field, name, value, indent);
-            case ENUM -> writeEnum(writer, name, (Enum)value, indent);
-            default -> writeObject(writer, name, value, indent);
+            case SIMPLE:
+                writeSimple(writer, name, value, indent);
+                break;
+            case ARRAY:
+                writeArray(writer, field, name, value, indent);
+                break;
+            case LIST:
+                writeList(writer, field, name, value, indent);
+                break;
+            case SET:
+                writeSet(writer, field, name, value, indent);
+                break;
+            case MAP:
+                writeMap(writer, field, name, value, indent);
+                break;
+            case ENUM:
+                writeEnum(writer, name, (Enum<?>) value, indent);
+                break;
+            default:
+                writeObject(writer, name, value, indent);
         }
     }
 
-    private void writeIndent(final Writer writer, final String indent) throws IOException {
+    default void writeIndent(final Writer writer, final String indent) throws IOException {
         if (shouldPrettyPrint()) writer.append(indent);
     }
-    private void writeNewLine(final Writer writer) throws IOException {
+
+    default void writeNewLine(final Writer writer) throws IOException {
         if (shouldPrettyPrint()) writer.append(newLine());
     }
 

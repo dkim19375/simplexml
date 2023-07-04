@@ -9,11 +9,11 @@ public final class Builder {
 
     public static void main(final String... args) {
         final XmlElement node =
-            newElement("element")
-                .attribute("name", "value")
-                .child(newElement("child"))
-                .text("Some text")
-                .build();
+                newElement("element")
+                        .attribute("name", "value")
+                        .child(newElement("child"))
+                        .text("Some text")
+                        .build();
 
         final XmlParser parser = new XmlParser();
         System.out.println(parser.domToXml(node));

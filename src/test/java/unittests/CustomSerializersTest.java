@@ -10,42 +10,22 @@ import static xmlparser.XmlParser.newXmlParser;
 
 public class CustomSerializersTest {
 
-    private static class Container {
-        final String name;
-        final Special special;
-        private Container(final String name, final Special special) {
-            this.name = name;
-            this.special = special;
-        }
-    }
-
-    private static class Special {
-        final Integer id;
-        final String name;
-        private Special(final Integer id, final String name) {
-            this.id = id;
-            this.name = name;
-        }
-    }
-
     private static final Container CONTAINER = new Container("container", new Special(1, "special"));
     private static final String CONTAINER_XML = "<container>\n" +
             "  <name>container</name>\n" +
             "  <special>1:special</special>\n" +
             "</container>\n";
-
     private final XmlParser parser = newXmlParser()
-        .addDeserializer(Special.class, value -> {
-            final String[] parts = value.split(":");
-            if (parts.length != 2) return null;
-            return new Special(Integer.parseInt(parts[0]), parts[1]);
-        })
-        .addSerializer(Special.class, value -> {
-            final Special s = (Special)value;
-            return s.id+":"+s.name;
-        })
-        .build();
-
+            .addDeserializer(Special.class, value -> {
+                final String[] parts = value.split(":");
+                if (parts.length != 2) return null;
+                return new Special(Integer.parseInt(parts[0]), parts[1]);
+            })
+            .addSerializer(Special.class, value -> {
+                final Special s = (Special) value;
+                return s.id + ":" + s.name;
+            })
+            .build();
 
     @Test
     public void serialize() {
@@ -61,6 +41,26 @@ public class CustomSerializersTest {
 
         assertNotNull("Pojo is null", c);
         assertReflectionEquals(c, CONTAINER);
+    }
+
+    private static class Container {
+        final String name;
+        final Special special;
+
+        private Container(final String name, final Special special) {
+            this.name = name;
+            this.special = special;
+        }
+    }
+
+    private static class Special {
+        final Integer id;
+        final String name;
+
+        private Special(final Integer id, final String name) {
+            this.id = id;
+            this.name = name;
+        }
     }
 
 }

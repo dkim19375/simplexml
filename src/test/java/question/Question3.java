@@ -15,38 +15,13 @@ import java.util.Map;
 public class Question3 {
 
     private static final String xml =
-        "<document code=\"100\" clazz=\"DocumentA\">\n" +
-        "    <properties>\n" +
-        "        <property name=\"PropA\" value=\"123\" />\n" +
-        "        <property name=\"PropB\" value=\"qwerty\" />\n" +
-        "        <property name=\"PropC\" value=\"ABC\" />\n" +
-        "    </properties>\n" +
-        "</document>";
-
-    private static class Document {
-        @XmlAttribute
-        private Integer code;
-        @XmlAttribute
-        private String clazz;
-        @XmlFieldDeserializer(clazz="question.Question3", function="deserializeProperties")
-        private Map<String, Property> properties;
-
-        // This also works
-//        @XmlWrapperTag("properties")
-//        @XmlName("property")
-//        private List<Property> properties;
-    }
-    private static class Property {
-        @XmlAttribute
-        private String name;
-        @XmlAttribute
-        private String value;
-
-        private Property(final String name, final String value) {
-            this.name = name;
-            this.value = value;
-        }
-    }
+            "<document code=\"100\" clazz=\"DocumentA\">\n" +
+                    "    <properties>\n" +
+                    "        <property name=\"PropA\" value=\"123\" />\n" +
+                    "        <property name=\"PropB\" value=\"qwerty\" />\n" +
+                    "        <property name=\"PropC\" value=\"ABC\" />\n" +
+                    "    </properties>\n" +
+                    "</document>";
 
     public static void main(final String... args) {
         final XmlParser parser = new XmlParser();
@@ -60,5 +35,31 @@ public class Question3 {
             map.put(property.attributes.get("name"), new Property(property.attributes.get("name"), property.attributes.get("value")));
         }
         return map;
+    }
+
+    private static class Document {
+        @XmlAttribute
+        private Integer code;
+        @XmlAttribute
+        private String clazz;
+        @XmlFieldDeserializer(clazz = "question.Question3", function = "deserializeProperties")
+        private Map<String, Property> properties;
+
+        // This also works
+//        @XmlWrapperTag("properties")
+//        @XmlName("property")
+//        private List<Property> properties;
+    }
+
+    private static class Property {
+        @XmlAttribute
+        private String name;
+        @XmlAttribute
+        private String value;
+
+        private Property(final String name, final String value) {
+            this.name = name;
+            this.value = value;
+        }
     }
 }

@@ -10,12 +10,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface XmlAbstractClass {
 
+    String attribute() default "class";
+
+    String tag() default "";
+
+    TypeMap[] types();
+
     @interface TypeMap {
         String name();
+
         Class<?> type();
     }
-
-    String attribute() default "class";
-    String tag() default "";
-    TypeMap[] types();
 }

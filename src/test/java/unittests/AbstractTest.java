@@ -11,70 +11,27 @@ import static org.junit.Assert.assertNotNull;
 
 public class AbstractTest {
 
-    private static final String ABSTRACT_CLASS_1 = """
-            <targetedMessage>
-                <sender>external application</sender>
-                <payload class="class.path.from.external.application.Foo">
-                    <id>1</id>
-                </payload>
-            </targetedMessage>""";
+    private static final String ABSTRACT_CLASS_1 = "<targetedMessage>\n" +
+            "    <sender>external application</sender>\n" +
+            "    <payload class=\"class.path.from.external.application.Foo\">\n" +
+            "        <id>1</id>\n" +
+            "    </payload>\n" +
+            "</targetedMessage>";
 
-    private static final String ABSTRACT_CLASS_2 = """
-            <targetedMessage>
-                <sender>external application</sender>
-                <payload type="class.path.from.external.application.Foo">
-                    <id>1</id>
-                </payload>
-            </targetedMessage>""";
+    private static final String ABSTRACT_CLASS_2 = "<targetedMessage>\n" +
+            "    <sender>external application</sender>\n" +
+            "    <payload type=\"class.path.from.external.application.Foo\">\n" +
+            "        <id>1</id>\n" +
+            "    </payload>\n" +
+            "</targetedMessage>";
 
-    private static final String ABSTRACT_CLASS_3 = """
-            <targetedMessage>
-                <sender>external application</sender>
-                <payload>
-                    <class>class.path.from.external.application.Foo</class>
-                    <id>1</id>
-                </payload>
-            </targetedMessage>""";
-
-    @XmlName("targetedMessage")
-    public class TargetedMessage1 {
-        String sender;
-        @XmlAbstractClass(types={
-            @TypeMap(name="class.path.from.external.application.Foo", type=Foo.class)
-        })
-        Payload payload;
-    }
-
-    @XmlName("targetedMessage")
-    public class TargetedMessage2 {
-        String sender;
-        @XmlAbstractClass(attribute="type", types={
-            @TypeMap(name="class.path.from.external.application.Foo", type=Foo.class),
-            @TypeMap(name="class.path.from.external.application.Bar", type=Bar.class)
-        })
-        Payload payload;
-    }
-    @XmlName("targetedMessage")
-    public class TargetedMessage3 {
-        String sender;
-        @XmlAbstractClass(tag="class", types={
-            @TypeMap(name="class.path.from.external.application.Foo", type=Foo.class)
-        })
-        Payload payload;
-    }
-
-
-    abstract class Payload {
-        private Integer id;
-        Integer getId() {
-            return id;
-        }
-    }
-    public class Foo extends Payload {}
-    public class Bar extends Payload {
-        String name;
-    }
-
+    private static final String ABSTRACT_CLASS_3 = "<targetedMessage>\n" +
+            "    <sender>external application</sender>\n" +
+            "    <payload>\n" +
+            "        <class>class.path.from.external.application.Foo</class>\n" +
+            "        <id>1</id>\n" +
+            "    </payload>\n" +
+            "</targetedMessage>";
     private final XmlParser parser = new XmlParser();
 
     @Test
@@ -108,6 +65,49 @@ public class AbstractTest {
         assertNotNull("Missing 'payload' field", pojo.payload);
         assertEquals("Payload field has wrong type", pojo.payload.getClass(), Foo.class);
         assertEquals("Foo does not have 'id' set", pojo.payload.getId(), Integer.valueOf(1));
+    }
+
+    @XmlName("targetedMessage")
+    public class TargetedMessage1 {
+        String sender;
+        @XmlAbstractClass(types = {
+                @TypeMap(name = "class.path.from.external.application.Foo", type = Foo.class)
+        })
+        Payload payload;
+    }
+
+    @XmlName("targetedMessage")
+    public class TargetedMessage2 {
+        String sender;
+        @XmlAbstractClass(attribute = "type", types = {
+                @TypeMap(name = "class.path.from.external.application.Foo", type = Foo.class),
+                @TypeMap(name = "class.path.from.external.application.Bar", type = Bar.class)
+        })
+        Payload payload;
+    }
+
+    @XmlName("targetedMessage")
+    public class TargetedMessage3 {
+        String sender;
+        @XmlAbstractClass(tag = "class", types = {
+                @TypeMap(name = "class.path.from.external.application.Foo", type = Foo.class)
+        })
+        Payload payload;
+    }
+
+    abstract class Payload {
+        private Integer id;
+
+        Integer getId() {
+            return id;
+        }
+    }
+
+    public class Foo extends Payload {
+    }
+
+    public class Bar extends Payload {
+        String name;
     }
 
 }

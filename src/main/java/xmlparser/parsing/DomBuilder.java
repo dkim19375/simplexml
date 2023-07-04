@@ -17,15 +17,18 @@ public class DomBuilder implements EventParser {
 
         this.current = tmp;
     }
+
     public void endNode(final boolean selfClosing) {
         this.current.setSelfClosing(selfClosing);
         this.current = this.current.parent;
     }
+
     public void someText(final String txt) {
         if (txt == null || txt.isEmpty()) return;
 
         this.current.children.add(new XmlTextElement(this.current, txt.trim()));
     }
+
     public XmlElement getRoot() {
         return this.root;
     }

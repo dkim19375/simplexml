@@ -12,31 +12,19 @@ import java.util.List;
 public final class Question5 {
 
     private static final String xml =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
-        "<!DOCTYPE note SYSTEM \"Note.dtd\">\n" +
-        "<note>\n" +
-            "<to>Tove</to>\n" +
-            "<from>Jani</from>\n" +
-            "<heading>Reminder</heading>\n" +
-            "<body>Don't forget me this weekend!</body>\n" +
-            "<sometag>\n" +
-                "<table>\n" +
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                    "<!DOCTYPE note SYSTEM \"Note.dtd\">\n" +
+                    "<note>\n" +
+                    "<to>Tove</to>\n" +
+                    "<from>Jani</from>\n" +
+                    "<heading>Reminder</heading>\n" +
+                    "<body>Don't forget me this weekend!</body>\n" +
+                    "<sometag>\n" +
+                    "<table>\n" +
                     "<tr><td>content</td></tr>\n" +
-                "</table>\n" +
-            "</sometag>\n" +
-        "</note>\n";
-
-    @XmlName("table")
-    private static class Table {
-        private List<Question5.Row> tr;
-    }
-    private static class Row {
-        private List<Cell> td;
-    }
-    private static class Cell {
-        @XmlTextNode
-        private String text;
-    }
+                    "</table>\n" +
+                    "</sometag>\n" +
+                    "</note>\n";
 
     public static void main(final String... args) {
         final XmlParser simple = new XmlParser();
@@ -53,6 +41,7 @@ public final class Question5 {
         getElementsByTagName(element, name, list);
         return list;
     }
+
     private static void getElementsByTagName(final XmlElement element, final String name, final List<XmlElement> list) {
         if (element == null) return;
         if (name.equals(element.name)) list.add(element);
@@ -69,6 +58,20 @@ public final class Question5 {
             Table table = simple.fromXml(element, Table.class);
             System.out.println(table.tr.get(0).td.get(0).text);
         }
+    }
+
+    @XmlName("table")
+    private static class Table {
+        private List<Question5.Row> tr;
+    }
+
+    private static class Row {
+        private List<Cell> td;
+    }
+
+    private static class Cell {
+        @XmlTextNode
+        private String text;
     }
 
 }

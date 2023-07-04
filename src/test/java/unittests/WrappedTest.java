@@ -4,7 +4,11 @@ import model.WrappedPojo;
 import org.junit.Test;
 import xmlparser.XmlParser;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -37,6 +41,14 @@ public class WrappedTest {
     private static final String wrappedXmlNullTwo = "<wrappedpojo><wrapper1></wrapper1></wrappedpojo>";
 
     private final XmlParser parser = new XmlParser();
+
+    private static WrappedPojo newDefaultWrappedPojo() {
+        final Map<String, String> map = new HashMap<>();
+        map.put("Guybrush", "Threepwood");
+        final Set<String> set = new HashSet<>();
+        set.add("Mêlée Island");
+        return new WrappedPojo("Hello", Arrays.asList(", world"), map, set, new String[]{"monkey"});
+    }
 
     @Test
     public void deserialize() {
@@ -71,14 +83,6 @@ public class WrappedTest {
 
         assertNotNull("No serialization response", xml);
         assertEquals("Invalid serialized output", wrappedXmlNull, xml);
-    }
-
-    private static WrappedPojo newDefaultWrappedPojo() {
-        final Map<String, String> map = new HashMap<>();
-        map.put("Guybrush", "Threepwood");
-        final Set<String> set = new HashSet<>();
-        set.add("Mêlée Island");
-        return new WrappedPojo("Hello", Arrays.asList(", world"), map, set, new String[]{"monkey"});
     }
 
 }

@@ -5,38 +5,43 @@ import xmlparser.error.InvalidXPath;
 import java.util.ArrayList;
 import java.util.List;
 
-import static xmlparser.utils.Constants.*;
+import static xmlparser.utils.Constants.ERROR_PREDICATE_WRONG_END;
+import static xmlparser.utils.Constants.ERROR_PREDICATE_WRONG_NAME;
+import static xmlparser.utils.Constants.ERROR_PREDICATE_WRONG_START;
+import static xmlparser.utils.Constants.PREDICATE_END_SYMBOL;
+import static xmlparser.utils.Constants.PREDICATE_START_SYMBOL;
+import static xmlparser.utils.Constants.SEGMENT_EXPRESSION;
 import static xmlparser.xpath.Predicate.parsePredicate;
 
 /**
- * Adapted from xml-lif (https://github.com/liflab/xml-lif) by Sylvain Hallé
+ * Adapted from xml-lif (<a href="https://github.com/liflab/xml-lif">...</a>) by Sylvain Hallé
  */
 public class Segment {
 
-	public final String elementName;
-	public final List<Predicate> predicates;
+    public final String elementName;
+    public final List<Predicate> predicates;
 
-	public Segment() {
-		this("", null);
-	}
+    public Segment() {
+        this("", null);
+    }
 
-	public Segment(final String elementName, final List<Predicate> predicates) {
-		this.elementName = elementName;
-		this.predicates = predicates;
-	}
+    public Segment(final String elementName, final List<Predicate> predicates) {
+        this.elementName = elementName;
+        this.predicates = predicates;
+    }
 
 
     public static Segment parseSegment(final String segment) throws InvalidXPath {
-		final String elementName = isValidElementName(segment.substring(0, indexOfPredicateSection(segment)));
+        final String elementName = isValidElementName(segment.substring(0, indexOfPredicateSection(segment)));
         if (SEGMENT_EXPRESSION.equals(elementName)) return new TextSegment();
 
-		return new Segment(elementName, extractPredicates(segment.substring(elementName.length())));
-	}
+        return new Segment(elementName, extractPredicates(segment.substring(elementName.length())));
+    }
 
     private static int indexOfPredicateSection(final String segment) {
         final int offsetPredicateStart = segment.indexOf(PREDICATE_START_SYMBOL);
         return offsetPredicateStart == -1 ? segment.length() : offsetPredicateStart;
-	}
+    }
 
     private static String isValidElementName(final String elementName) throws InvalidXPath {
         if (elementName.contains(PREDICATE_END_SYMBOL)) throw new InvalidXPath(ERROR_PREDICATE_WRONG_NAME);

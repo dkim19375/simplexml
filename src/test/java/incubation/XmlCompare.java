@@ -8,25 +8,27 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-public enum XmlCompare {;
+public enum XmlCompare {
+    ;
 
     private static final boolean
-        tagNameIsEqual = true,
-        attributeNamesAreEqual = true,
-        attributeValuesAreEqual = true,
-        attributeOrderIsEqual = true,
-        childrenAreEqual = true,
-        childrenOrderIsEqual = true;
+            tagNameIsEqual = true,
+            attributeNamesAreEqual = true,
+            attributeValuesAreEqual = true,
+            attributeOrderIsEqual = true,
+            childrenAreEqual = true,
+            childrenOrderIsEqual = true;
 
     public boolean equals(final XmlElement first, final XmlElement second) {
         if (first instanceof XmlTextElement) {
             if (!(second instanceof XmlTextElement))
                 return false;
-            return ((XmlTextElement)first).text.equals(((XmlTextElement) second).text);
+            return ((XmlTextElement) first).text.equals(((XmlTextElement) second).text);
         }
 
         if (tagNameIsEqual && !Objects.equals(first.name, second.name)) return false;
-        if (attributeNamesAreEqual && !Objects.equals(first.attributes.keySet(), second.attributes.keySet())) return false;
+        if (attributeNamesAreEqual && !Objects.equals(first.attributes.keySet(), second.attributes.keySet()))
+            return false;
         if (attributeValuesAreEqual) {
             for (final Map.Entry<String, String> entry : first.attributes.entrySet()) {
                 if (!Objects.equals(entry.getValue(), second.attributes.get(entry.getKey())))

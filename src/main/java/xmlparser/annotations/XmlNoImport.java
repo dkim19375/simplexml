@@ -10,4 +10,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * and you want to make sure it is never set by data.
  */
 @Retention(RUNTIME)
-public @interface XmlNoImport { /* just a marker */ }
+public @interface XmlNoImport { /* just a marker */
+}

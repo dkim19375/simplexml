@@ -2,7 +2,7 @@
 
 ## Add more support for xpath
 
-XPath support is very simplistic at the moment. 
+XPath support is very simplistic at the moment.
 There are other options documented here: https://github.com/code4craft/xsoup
 
 Current XPath support was copied, with permission, from another project.
@@ -30,7 +30,6 @@ CDATA blocks are another weird feature in XML that really shouldn't exist at all
 But it does exist and it would be nice to have a way to make the parser correctly parse them.
 
 https://en.wikipedia.org/wiki/CDATA
-
 
 # Nice to haves
 
@@ -92,8 +91,8 @@ If the tag exists, but the data is missing, throw a serialization exception
 
 ## Speed up Xpath parsing
 
-The @XmlPath annotation contains a string that denotes the XPath expression to use. 
-Currently, the Xpath is compiled every single time it is encountered. 
+The @XmlPath annotation contains a string that denotes the XPath expression to use.
+Currently, the Xpath is compiled every single time it is encountered.
 This can be sped up by using interning.
 
 ## Make self-closing tag during serialization configurable
@@ -116,18 +115,18 @@ An annotation that tells the serializer to create an empty tag for a null field.
 ## A parser listener with this kind of interface
 
 public interface EventHandler {
-  void handle(String value);
+void handle(String value);
 }
 
 Parser parser = newParser()
-    .on(START_ELEMENT, handler)
-    .on(ATTRIBUTE_NAME, handler)
-    .on(ATTRIBUTE_VALUE, handler)
-    .on(VALUE, handler)
-    .on(END_ELEMENT, handler)
-    .on(ERROR, handler)
-    .build();
-    
+.on(START_ELEMENT, handler)
+.on(ATTRIBUTE_NAME, handler)
+.on(ATTRIBUTE_VALUE, handler)
+.on(VALUE, handler)
+.on(END_ELEMENT, handler)
+.on(ERROR, handler)
+.build();
+
 Don't care that much about this anymore
 
 ## Add support for comments parsing

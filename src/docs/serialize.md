@@ -28,7 +28,7 @@ When run this will output:
     <project>
       <name>test</name>
     </project>
-    
+
 By adding the `@XmlAttribute` annotation above the name field you can turn the name tag into a name attribute.
 The output from the code will look like this:
 
@@ -60,7 +60,7 @@ The code for the Project class now looks like this:
 When we run the serializer on this class we get:
 
     <project other="test">Just a project</project>
-    
+
 By adding the `@XmlNoExport` annotation you can tell the serializer to ignore a field.
 Lets add a field named `hidden` and give it this annotation.
 The added code looks like this:

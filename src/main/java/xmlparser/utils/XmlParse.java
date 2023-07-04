@@ -7,7 +7,8 @@ import static xmlparser.utils.Constants.CHAR_FORWARD_SLASH;
 import static xmlparser.utils.Constants.CHAR_SPACE;
 import static xmlparser.utils.Trimming.Trim;
 
-public enum XmlParse {;
+public enum XmlParse {
+    ;
 
     public static String getNameOfTag(final String tag) {
         int offset = 0;
@@ -23,7 +24,7 @@ public enum XmlParse {;
         int data;
         while ((data = in.read()) != -1) {
             if (data == end) break;
-            chars.append((char)data);
+            chars.append((char) data);
         }
         if (data == -1) return null;
         return chars.toString();
@@ -43,7 +44,7 @@ public enum XmlParse {;
 
         int data;
         while ((data = in.read()) != -1) {
-            chars.append((char)data);
+            chars.append((char) data);
             if (isEndReached(chars, end)) return chars.toString();
         }
         return null;
@@ -63,6 +64,7 @@ public enum XmlParse {;
         }
         return -1;
     }
+
     public static int indexOfWhitespaceChar(final String input, final int offset, final Trim trimmer) {
         for (int i = offset; i < input.length(); i++) {
             final char at = input.charAt(i);

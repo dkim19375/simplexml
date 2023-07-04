@@ -9,19 +9,13 @@ import xmlparser.model.XmlElement;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class FieldDeserializerTest {
 
-    private static class FieldPojo {
-        @XmlFieldDeserializer(clazz="unittests.FieldDeserializerTest", function="deserializeMap")
-        private Map<String, String> map;
-    }
-
-    private static class InvalidFieldPojo {
-        @XmlFieldDeserializer(clazz="doesntexist.Clazz", function="nothere")
-        private Map<String, String> map;
-    }
+    private final XmlParser parser = new XmlParser();
 
     // It is used, but the IDE can't see this
     public static Map<String, String> deserializeMap(final XmlElement parent) {
@@ -32,18 +26,16 @@ public class FieldDeserializerTest {
         return map;
     }
 
-    private final XmlParser parser = new XmlParser();
-
     @Test
     public void testFieldDeserializer() {
         final String xml =
-            "<fieldpojo>\n" +
-            "    <map>\n" +
-            "        <item name=\"ItemA\" value=\"123\" />\n" +
-            "        <item name=\"ItemB\" value=\"qwerty\" />\n" +
-            "        <item name=\"ItemC\" value=\"ABC\" />\n" +
-            "    </map>\n" +
-            "</fieldpojo>";
+                "<fieldpojo>\n" +
+                        "    <map>\n" +
+                        "        <item name=\"ItemA\" value=\"123\" />\n" +
+                        "        <item name=\"ItemB\" value=\"qwerty\" />\n" +
+                        "        <item name=\"ItemC\" value=\"ABC\" />\n" +
+                        "    </map>\n" +
+                        "</fieldpojo>";
 
         final FieldPojo pojo = parser.fromXml(xml, FieldPojo.class);
 
@@ -53,9 +45,19 @@ public class FieldDeserializerTest {
         assertEquals("map has wrong number of elements", 3, pojo.map.size());
     }
 
-    @Test (expected = InvalidAnnotation.class)
+    @Test(expected = InvalidAnnotation.class)
     public void testInvalidFieldDeserializer() {
         final String xml = "<invalidfieldpojo><map></map></invalidfieldpojo>";
         parser.fromXml(xml, InvalidFieldPojo.class);
+    }
+
+    private static class FieldPojo {
+        @XmlFieldDeserializer(clazz = "unittests.FieldDeserializerTest", function = "deserializeMap")
+        private Map<String, String> map;
+    }
+
+    private static class InvalidFieldPojo {
+        @XmlFieldDeserializer(clazz = "doesntexist.Clazz", function = "nothere")
+        private Map<String, String> map;
     }
 }
